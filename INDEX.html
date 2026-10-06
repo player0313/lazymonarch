@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LazyMonarch | Gaming Tournaments & Anime Merch Store</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6.4 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Razorpay Checkout SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        royal: {
+                            dark: '#0a0b10',
+                            card: '#121420',
+                            accent: '#7c3aed',
+                            glow: '#8b5cf6',
+                            cyan: '#06b6d4',
+                            gold: '#f59e0b',
+                            pink: '#ec4899',
+                            emerald: '#10b981'
+                        }
+                    },
+                    animation: {
+                        'float': 'float 5s ease-in-out infinite',
+                        'float-delayed': 'float 5s ease-in-out 2.5s infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                        'pulse-glow': 'pulseGlow 3s infinite alternate',
+                        'mario-drive': 'marioDrive 12s linear infinite'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-10px) rotate(1.5deg)' },
+                        },
+                        pulseGlow: {
+                            '0%': { opacity: '0.3', filter: 'blur(20px)' },
+                            '100%': { opacity: '0.8', filter: 'blur(35px)' },
+                        },
+                        marioDrive: {
+                            '0%': { transform: 'translateX(-120%)' },
+                            '100%': { transform: 'translateX(100vw)' }
+                        },
+                        kartBounce: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-2px) rotate(2deg)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .mario-kart-sprite {
+            animation: kartBounce 0.4s ease-in-out infinite;
+            filter: drop-shadow(0 3px 6px rgba(239, 68, 68, 0.6)) drop-shadow(0 0 10px rgba(245, 158, 11, 0.4));
+        }
+
+        body {
+            background-color: #0a0b10;
+            color: #f3f4f6;
+            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .brand-logo-img {
+            background: transparent !important;
+            mix-blend-mode: normal;
+            filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.75)) drop-shadow(0 2px 8px rgba(0, 0, 0, 0.8));
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .brand-logo-img:hover {
+            filter: drop-shadow(0 0 22px rgba(192, 132, 252, 0.95)) drop-shadow(0 4px 12px rgba(124, 58, 237, 0.6));
+            transform: scale(1.04);
+        }
+
+        .perspective-1000 { perspective: 1000px; }
+        .preserve-3d { transform-style: preserve-3d; }
+
+        .glass-panel {
+            background: rgba(18, 20, 32, 0.75);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .glass-nav {
+            background: rgba(12, 14, 24, 0.88);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 
+                0 15px 35px -5px rgba(0, 0, 0, 0.6),
+                0 0 25px rgba(124, 58, 237, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .icon-3d {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 
+                0 6px 12px -2px rgba(0, 0, 0, 0.6),
+                inset 0 1px 2px rgba(255, 255, 255, 0.4),
+                0 4px 0 #2e1065;
+        }
+
+        .icon-3d-hover:hover .icon-3d {
+            transform: translateZ(16px) translateY(-5px) rotateX(15deg) rotateY(-10deg);
+            box-shadow: 
+                0 15px 25px -5px rgba(124, 58, 237, 0.6),
+                inset 0 1px 3px rgba(255, 255, 255, 0.8),
+                0 8px 0 #4c1d95;
+        }
+
+        .nav-3d-item {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .nav-3d-item:hover {
+            transform: translateY(-3px) scale(1.03);
+        }
+
+        .mobile-nav-item.active .mobile-icon-wrapper {
+            transform: translateY(-20px) scale(1.15) rotateX(15deg);
+            background: linear-gradient(135deg, #7c3aed, #06b6d4);
+            color: #ffffff;
+            box-shadow: 
+                0 14px 28px rgba(124, 58, 237, 0.8),
+                0 0 0 4px #0a0b10;
+        }
+
+        .mobile-nav-item .mobile-icon-wrapper {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-3d {
+            transition: all 0.15s ease;
+            box-shadow: 0 6px 0px #4c1d95, 0 12px 20px rgba(0, 0, 0, 0.5);
+        }
+        .btn-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px #4c1d95, 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-3d-gold {
+            transition: all 0.15s ease;
+            box-shadow: 0 6px 0px #b45309, 0 12px 20px rgba(245, 158, 11, 0.3);
+        }
+        .btn-3d-gold:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0px #b45309, 0 4px 10px rgba(245, 158, 11, 0.4);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #ffffff 20%, #c084fc 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-gradient-gold {
+            background: linear-gradient(135deg, #fef08a 0%, #f59e0b 50%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0b10; }
+        ::-webkit-scrollbar-thumb { background: #1e2030; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #7c3aed; }
+    </style>
+</head>
+<body class="relative min-h-screen pb-32 md:pb-12 selection:bg-royal-accent selection:text-white">
+
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- MARIO KART ANIMATED EASTER EGG ROAD BARK -->
+    <div class="fixed bottom-0 left-0 right-0 h-8 z-30 pointer-events-none overflow-hidden hidden md:block opacity-75">
+        <div class="w-full h-full relative border-t border-slate-800 bg-slate-950/60">
+            <div class="absolute bottom-1 animate-mario-drive flex items-center gap-2">
+                <i class="fa-solid fa-car-side text-red-500 text-lg mario-kart-sprite"></i>
+                <span class="text-[9px] font-mono text-royal-gold uppercase font-bold tracking-widest bg-slate-900/90 px-2 py-0.5 rounded border border-amber-500/30">MONARCH EXPRESS DELIVERY</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- DESKTOP HEADER NAVBAR -->
+    <header class="fixed top-0 left-0 right-0 z-50 hidden md:block pt-4 px-6">
+        <div class="max-w-7xl mx-auto">
+            <nav class="glass-nav rounded-2xl px-5 py-2.5 flex items-center justify-between gap-4 transition-all duration-300">
+                <a href="#home" class="flex items-center shrink-0 group bg-transparent">
+                    <img src="download.png" alt="LAZYMONARCH Logo" class="brand-logo-img h-12 w-auto object-contain max-w-[210px] bg-transparent" onerror="this.onerror=null; this.src='https://placehold.co/220x60/0a0b10/a855f7?text=LAZY+MONARCH';">
+                </a>
+
+                <div class="flex items-center gap-1.5 perspective-1000">
+                    <a href="#home" class="nav-3d-item icon-3d-hover px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs font-semibold text-slate-200 hover:text-white">
+                        <div class="icon-3d w-8 h-8 rounded-lg bg-purple-950 border border-purple-500/40 flex items-center justify-center text-purple-400"><i class="fa-solid fa-house text-xs"></i></div>
+                        <span>Home</span>
+                    </a>
+                    <a href="#tournaments" class="nav-3d-item icon-3d-hover px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-white">
+                        <div class="icon-3d w-8 h-8 rounded-lg bg-amber-950 border border-amber-500/40 flex items-center justify-center text-royal-gold"><i class="fa-solid fa-trophy text-xs"></i></div>
+                        <span>Tournaments</span>
+                    </a>
+                    <a href="#shop" class="nav-3d-item icon-3d-hover px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-white">
+                        <div class="icon-3d w-8 h-8 rounded-lg bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-royal-cyan"><i class="fa-solid fa-bag-shopping text-xs"></i></div>
+                        <span>Shop</span>
+                    </a>
+                    <a href="#membership" class="nav-3d-item icon-3d-hover px-3 py-1.5 rounded-xl flex items-center gap-2 text-xs font-semibold text-slate-300 hover:text-white">
+                        <div class="icon-3d w-8 h-8 rounded-lg bg-pink-950 border border-pink-500/40 flex items-center justify-center text-royal-pink"><i class="fa-solid fa-crown text-xs"></i></div>
+                        <span>Membership</span>
+                    </a>
+                </div>
+
+                <div class="relative flex-1 max-w-xs mx-2">
+                    <div class="relative flex items-center">
+                        <input type="text" id="desktopSearchInput" oninput="handleSearch(this.value)" placeholder="Search tournaments, stickers, gear..." 
+                            class="w-full pl-10 pr-9 py-2 rounded-xl bg-slate-900/90 border border-slate-700/80 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-royal-accent focus:ring-2 focus:ring-royal-accent/30 transition-all">
+                        <div class="absolute left-3 text-slate-400 text-xs pointer-events-none"><i class="fa-solid fa-magnifying-glass text-royal-cyan"></i></div>
+                        <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 text-slate-400 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+
+                    <div id="searchDropdown" class="hidden absolute top-full left-0 right-0 mt-3 glass-panel rounded-2xl p-3 border border-white/15 shadow-2xl z-50 max-h-80 overflow-y-auto">
+                        <div class="text-[10px] uppercase font-bold tracking-wider text-slate-400 px-2 mb-2 flex items-center justify-between">
+                            <span>Live Monarch Search</span>
+                            <span id="searchResultCount" class="text-royal-cyan font-mono">0 found</span>
+                        </div>
+                        <div id="searchResultsList" class="space-y-1"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2.5 shrink-0">
+                    <button onclick="openTrackingModal()" title="Track Order Courier" class="icon-3d-hover relative w-10 h-10 flex items-center justify-center">
+                        <div class="icon-3d w-10 h-10 rounded-xl bg-slate-900 border border-emerald-500/40 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-truck-fast text-xs"></i></div>
+                    </button>
+
+                    <button onclick="toggleWishlistModal()" title="View Wishlist" class="icon-3d-hover relative w-10 h-10 flex items-center justify-center">
+                        <div class="icon-3d w-10 h-10 rounded-xl bg-pink-950/80 border border-pink-500/40 flex items-center justify-center text-pink-400"><i class="fa-solid fa-heart text-xs"></i></div>
+                        <span id="wishlistBadge" class="absolute -top-1 -right-1 w-5 h-5 bg-pink-600 text-white text-[10px] font-black rounded-full flex items-center justify-center border border-slate-950">0</span>
+                    </button>
+
+                    <button onclick="openOrdersModal()" title="View Orders" class="icon-3d-hover relative w-10 h-10 flex items-center justify-center">
+                        <div class="icon-3d w-10 h-10 rounded-xl bg-purple-950/90 border border-purple-500/40 flex items-center justify-center text-purple-300"><i class="fa-solid fa-box-open text-xs"></i></div>
+                        <span id="ordersBadge" class="absolute -top-1 -right-1 w-5 h-5 bg-royal-accent text-white text-[10px] font-black rounded-full flex items-center justify-center border border-slate-950">0</span>
+                    </button>
+
+                    <div id="authBtnContainer">
+                        <button onclick="openAuthModal('login')" class="btn-3d px-4 py-2 rounded-xl bg-gradient-to-r from-royal-accent to-indigo-600 text-white font-bold text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-right-to-bracket text-xs"></i>
+                            <span>Sign In</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MOBILE TOP HEADER -->
+    <header class="fixed top-0 left-0 right-0 z-40 block md:hidden glass-panel border-b border-white/15 shadow-2xl pt-2 pb-3 px-4">
+        <div class="flex items-center justify-between mb-2">
+            <a href="#home" class="flex items-center bg-transparent">
+                <img src="download.png" alt="LAZYMONARCH Logo" class="brand-logo-img h-10 w-auto object-contain max-w-[170px] bg-transparent" onerror="this.onerror=null; this.src='https://placehold.co/180x50/0a0b10/a855f7?text=LAZY+MONARCH';">
+            </a>
+            <div class="flex items-center gap-2">
+                <button onclick="openTrackingModal()" class="px-2.5 py-1 rounded-lg bg-slate-900 border border-emerald-500/40 text-emerald-400 text-xs font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-truck-fast text-xs"></i>
+                </button>
+                <button onclick="openAuthModal()" class="px-3 py-1 rounded-lg bg-slate-900 border border-royal-accent/40 text-[11px] font-bold text-royal-gold flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-user-ninja text-xs text-royal-cyan"></i>
+                    <span id="mobileTopUserText">Sign In</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="relative w-full mt-2">
+            <input type="text" id="mobileSearchInput" oninput="handleSearch(this.value)" placeholder="Search tournaments, anime stickers, gear..." 
+                class="w-full pl-9 pr-8 py-2 rounded-xl bg-slate-900/90 border border-slate-700 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-royal-cyan focus:ring-1 focus:ring-royal-cyan/40">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-royal-cyan"></i>
+            <button id="mobileClearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-2.5 text-slate-400 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </header>
+
+    <!-- Mobile 3D Bottom Floating Arc Dock -->
+    <nav class="fixed bottom-3 left-3 right-3 z-50 md:hidden">
+        <div class="glass-nav rounded-2xl px-2 py-1.5 flex items-center justify-around relative border border-white/15 shadow-2xl">
+            <a href="#home" onclick="setActiveMobile(this)" class="mobile-nav-item active flex flex-col items-center py-1 px-1.5">
+                <div class="mobile-icon-wrapper w-9 h-9 rounded-xl bg-slate-800/90 border border-slate-700/80 flex items-center justify-center text-purple-400"><i class="fa-solid fa-house text-xs"></i></div>
+                <span class="text-[9px] font-semibold text-slate-300 mt-1">Home</span>
+            </a>
+            <a href="#tournaments" onclick="setActiveMobile(this)" class="mobile-nav-item flex flex-col items-center py-1 px-1.5">
+                <div class="mobile-icon-wrapper w-9 h-9 rounded-xl bg-slate-800/90 border border-slate-700/80 flex items-center justify-center text-slate-400"><i class="fa-solid fa-trophy text-xs"></i></div>
+                <span class="text-[9px] font-semibold text-slate-400 mt-1">Arena</span>
+            </a>
+            <a href="#shop" onclick="setActiveMobile(this)" class="mobile-nav-item flex flex-col items-center py-1 px-1.5">
+                <div class="mobile-icon-wrapper w-9 h-9 rounded-xl bg-slate-800/90 border border-slate-700/80 flex items-center justify-center text-slate-400"><i class="fa-solid fa-bag-shopping text-xs"></i></div>
+                <span class="text-[9px] font-semibold text-slate-400 mt-1">Shop</span>
+            </a>
+            <button onclick="openOrdersModal()" class="mobile-nav-item flex flex-col items-center py-1 px-1.5 relative">
+                <div class="mobile-icon-wrapper w-9 h-9 rounded-xl bg-amber-950/80 border border-amber-500/50 flex items-center justify-center text-royal-gold relative">
+                    <i class="fa-solid fa-box-open text-xs"></i>
+                    <span id="mobileOrdersBadge" class="absolute -top-1.5 -right-1.5 w-4 h-4 bg-royal-accent text-white text-[9px] font-black rounded-full flex items-center justify-center border border-slate-950">0</span>
+                </div>
+                <span class="text-[9px] font-bold text-royal-gold mt-1">Orders</span>
+            </button>
+            <a href="#membership" onclick="setActiveMobile(this)" class="mobile-nav-item flex flex-col items-center py-1 px-1.5">
+                <div class="mobile-icon-wrapper w-9 h-9 rounded-xl bg-slate-800/90 border border-slate-700/80 flex items-center justify-center text-slate-400"><i class="fa-solid fa-crown text-xs"></i></div>
+                <span class="text-[9px] font-semibold text-slate-400 mt-1">VIP</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="relative z-10 pt-36 md:pt-36 px-4 md:px-8 max-w-7xl mx-auto">
+        <section id="home" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center py-6 md:py-12">
+            <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-royal-accent/30 text-xs font-semibold text-purple-300 shadow-inner">
+                    <span class="flex h-2 w-2 rounded-full bg-royal-gold animate-ping"></span>
+                    <span>Esports Arena & Anime Merch Haven</span>
+                    <i class="fa-solid fa-crown text-royal-gold text-[11px]"></i>
+                </div>
+
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-none">
+                    DOMINATE THE <span class="text-gradient-gold">ARENA.</span> <br>
+                    GEAR UP IN <span class="text-gradient">ROYAL STYLE.</span>
+                </h1>
+
+                <p class="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
+                    Battle in high-stakes esports gaming tournaments & collect ultra-exclusive holographic anime stickers, deskpads, and gaming accessories.
+                </p>
+
+                <div class="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                    <a href="#tournaments" class="btn-3d-gold w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 via-royal-gold to-yellow-600 text-slate-950 font-black text-sm flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-trophy text-xs"></i>
+                        <span>Browse Tournaments</span>
+                    </a>
+                    <a href="#shop" class="btn-3d w-full sm:w-auto px-8 py-3.5 rounded-xl bg-slate-900 border border-slate-700/80 text-white font-semibold text-sm flex items-center justify-center gap-3 hover:bg-slate-800">
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs text-royal-cyan"></i>
+                        <span>Shop Anime & Gear</span>
+                    </a>
+                </div>
+
+                <div class="pt-6 grid grid-cols-3 gap-4 border-t border-slate-800/80 max-w-lg mx-auto lg:mx-0">
+                    <div>
+                        <div class="text-2xl font-black text-white">₹50,000+</div>
+                        <div class="text-xs text-slate-400 mt-0.5">Monthly Prize Pools</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-black text-white">200+</div>
+                        <div class="text-xs text-slate-400 mt-0.5">Anime Stickers</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-black text-white">Instant</div>
+                        <div class="text-xs text-slate-400 mt-0.5">Automated Bracket</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 perspective-1000 flex justify-center">
+                <div id="heroCard" class="tilt-card w-full max-w-md glass-panel rounded-3xl p-6 relative border border-white/15 animate-float shadow-2xl">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-royal-accent via-royal-cyan to-royal-gold rounded-3xl opacity-30 blur-xl -z-10 animate-pulse-glow"></div>
+                    <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                        <div class="flex items-center gap-3">
+                            <div class="icon-3d w-11 h-11 rounded-xl bg-purple-950 border border-purple-500/50 flex items-center justify-center text-royal-gold text-xl">
+                                <i class="fa-solid fa-gamepad"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white text-sm">Monarch Pass #808</h3>
+                                <p class="text-xs text-slate-400">Pro Gamer & VIP Collector</p>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-royal-gold border border-amber-500/30 text-xs font-bold">VIP Tier</span>
+                    </div>
+
+                    <div class="relative h-48 rounded-2xl bg-gradient-to-b from-slate-950 via-slate-900 to-purple-950/40 border border-slate-800 flex items-center justify-center overflow-hidden">
+                        <div class="absolute inset-0 bg-[linear-gradient(to_right,#1f2937_1px,transparent_1px),linear-gradient(to_bottom,#1f2937_1px,transparent_1px)] bg-[size:1.5rem_1.5rem] opacity-30"></div>
+                        <div class="relative z-10 flex flex-col items-center gap-2">
+                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-purple-600 via-pink-500 to-amber-400 p-[2px] shadow-2xl shadow-purple-500/50 preserve-3d animate-spin-slow">
+                                <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+                                    <i class="fa-solid fa-dragon text-3xl text-royal-cyan"></i>
+                                </div>
+                            </div>
+                            <span class="text-xs font-extrabold tracking-wider text-royal-gold uppercase">Gojo Holographic Sticker</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex justify-between items-center text-xs text-slate-300 font-semibold">
+                        <span>Tournament Registration</span>
+                        <span class="text-emerald-400 font-mono"><i class="fa-solid fa-circle text-[8px] mr-1"></i>OPEN NOW</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FLASH DEALS BANNER SECTION -->
+        <section class="py-6">
+            <div class="glass-panel rounded-3xl p-6 border border-amber-500/30 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="absolute -right-10 -bottom-10 text-amber-500/10 text-9xl pointer-events-none font-black">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div class="space-y-2 text-center md:text-left relative z-10">
+                    <div id="arenaSaleBadge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-royal-gold text-[11px] font-black uppercase">
+                        <i class="fa-solid fa-clock animate-pulse"></i> Flash Arena Sale Ending Soon
+                    </div>
+                    <h3 class="text-2xl font-black text-white">Get Up To 40% OFF On Custom Anime Deskpads!</h3>
+                    <p class="text-xs text-slate-400">Order today & get a free Gojo Holographic Vinyl Sticker with every order.</p>
+                </div>
+                <div class="flex items-center gap-3 shrink-0 relative z-10">
+                    <div class="text-center bg-slate-950/80 border border-slate-800 p-2.5 rounded-xl w-14">
+                        <div class="text-lg font-black text-royal-gold" id="timerHours">05</div>
+                        <div class="text-[9px] uppercase text-slate-400">Hrs</div>
+                    </div>
+                    <div class="text-center bg-slate-950/80 border border-slate-800 p-2.5 rounded-xl w-14">
+                        <div class="text-lg font-black text-royal-gold" id="timerMins">42</div>
+                        <div class="text-[9px] uppercase text-slate-400">Mins</div>
+                    </div>
+                    <div class="text-center bg-slate-950/80 border border-slate-800 p-2.5 rounded-xl w-14">
+                        <div class="text-lg font-black text-royal-gold" id="timerSecs">18</div>
+                        <div class="text-[9px] uppercase text-slate-400">Secs</div>
+                    </div>
+                    <a href="#shop" class="btn-3d-gold px-5 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-royal-gold text-slate-950 font-black text-xs uppercase tracking-wider">
+                        Claim Deal
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- TOURNAMENTS SECTION -->
+        <section id="tournaments" class="py-16 border-t border-slate-800/60">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                <div>
+                    <h2 class="text-xs uppercase tracking-widest font-extrabold text-royal-gold mb-2"><i class="fa-solid fa-trophy mr-1"></i> Esports Battlegrounds</h2>
+                    <p class="text-3xl sm:text-4xl font-extrabold text-white">Live & Upcoming Tournaments</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterTournaments('all', this)" class="tourney-btn active px-3.5 py-1.5 rounded-xl bg-royal-accent text-white text-xs font-bold transition-all">All Arenas</button>
+                    <button onclick="filterTournaments('live', this)" class="tourney-btn px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-semibold hover:border-slate-700 transition-all">● Live Now</button>
+                    <button onclick="filterTournaments('upcoming', this)" class="tourney-btn px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-semibold hover:border-slate-700 transition-all">Registration Open</button>
+                </div>
+            </div>
+
+            <div id="tournamentsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 perspective-1000"></div>
+        </section>
+
+        <!-- UPGRADED PRODUCT SHOP SECTION -->
+        <section id="shop" class="py-16 border-t border-slate-800/60">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+                <div>
+                    <h2 class="text-xs uppercase tracking-widest font-extrabold text-royal-cyan mb-2"><i class="fa-solid fa-store mr-1"></i> Monarch Vault</h2>
+                    <p class="text-3xl sm:text-4xl font-extrabold text-white">Gaming Gear & Anime Merchandise</p>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterShop('all', this)" class="shop-btn active px-3.5 py-1.5 rounded-xl bg-royal-accent text-white text-xs font-bold transition-all">All Items</button>
+                    <button onclick="filterShop('stickers', this)" class="shop-btn px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-semibold hover:border-slate-700 transition-all">Anime Stickers</button>
+                    <button onclick="filterShop('gear', this)" class="shop-btn px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-semibold hover:border-slate-700 transition-all">Gaming Accessories</button>
+                    <button onclick="filterShop('custom', this)" class="shop-btn px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs font-semibold hover:border-slate-700 transition-all">Deskpads & Signs</button>
+                </div>
+            </div>
+
+            <div id="searchStatus" class="hidden mb-6 p-3 rounded-xl bg-purple-950/80 border border-purple-500/40 flex items-center justify-between text-xs text-purple-200">
+                <span>Displaying search matches for: <strong id="searchQueryTerm" class="text-royal-gold"></strong></span>
+                <button onclick="clearSearch()" class="text-royal-cyan underline font-semibold hover:text-white">Clear Search Query</button>
+            </div>
+
+            <!-- Upgraded Dynamic Products Grid -->
+            <div id="shopGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 perspective-1000"></div>
+
+            <div id="noResults" class="hidden py-16 text-center space-y-4">
+                <div class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-500 text-2xl mx-auto">
+                    <i class="fa-solid fa-ghost"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white">No Items or Tournaments Matched</h3>
+                <p class="text-slate-400 text-xs max-w-sm mx-auto">Try searching terms like "Valorant", "Gojo", "Sticker", "Mouse", or "Keycap".</p>
+                <button onclick="clearSearch()" class="px-4 py-2 rounded-xl bg-royal-accent text-white text-xs font-semibold">Reset Search</button>
+            </div>
+        </section>
+
+        <!-- MEMBERSHIP SECTION -->
+        <section id="membership" class="py-16 border-t border-slate-800/60">
+            <div class="text-center max-w-3xl mx-auto mb-12 space-y-3">
+                <h2 class="text-xs uppercase tracking-widest font-extrabold text-royal-gold"><i class="fa-solid fa-crown mr-1"></i> VIP Passes</h2>
+                <p class="text-3xl sm:text-4xl font-extrabold text-white">Unlock Royal Monarch Perks</p>
+                <p class="text-slate-400 text-xs">Get free tournament entry fees, monthly anime sticker boxes, and store discounts.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 perspective-1000">
+                <div class="tilt-card glass-panel rounded-3xl p-6 border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-bold text-slate-300">Casual Monarch</span>
+                            <span class="px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px] font-bold">STARTER</span>
+                        </div>
+                        <div class="text-3xl font-black text-white mb-4">₹0 <span class="text-xs font-normal text-slate-400">/ forever</span></div>
+                        <ul class="space-y-3 text-xs text-slate-300 mb-6">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Access to community tournaments</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Standard merchandise store access</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Basic Discord community role</li>
+                        </ul>
+                    </div>
+                    <button onclick="triggerToast('Joined as Casual Monarch!')" class="w-full py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-slate-200 text-xs font-semibold hover:bg-slate-800">
+                        Get Started
+                    </button>
+                </div>
+
+                <div class="tilt-card glass-panel rounded-3xl p-6 border-2 border-royal-accent relative shadow-2xl shadow-purple-900/40 flex flex-col justify-between">
+                    <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r from-royal-accent to-royal-cyan text-white text-[10px] font-black uppercase tracking-wider shadow-lg">
+                        Most Popular
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-bold text-white">Pro Gamer Pass</span>
+                            <span class="px-2.5 py-0.5 rounded-full bg-purple-900/60 text-purple-300 text-[10px] font-bold">RECOMMENDED</span>
+                        </div>
+                        <div class="text-3xl font-black text-white mb-4">₹499 <span class="text-xs font-normal text-slate-400">/ month</span></div>
+                        <ul class="space-y-3 text-xs text-slate-200 mb-6">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-royal-cyan"></i> Priority slot in all Esports Tournaments</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-royal-cyan"></i> 15% OFF all Anime Stickers & Gear</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-royal-cyan"></i> Free Monthly Anime Sticker Pack</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-royal-cyan"></i> Pro Gamer Discord Badge</li>
+                        </ul>
+                    </div>
+                    <button onclick="triggerToast('Upgraded to Pro Gamer Pass!')" class="btn-3d w-full py-3 rounded-xl bg-gradient-to-r from-royal-accent to-indigo-600 text-white text-xs font-bold">
+                        Upgrade To Pro
+                    </button>
+                </div>
+
+                <div class="tilt-card glass-panel rounded-3xl p-6 border border-amber-500/40 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-sm font-bold text-royal-gold">Royal VIP Monarch</span>
+                            <span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-royal-gold text-[10px] font-bold">ULTIMATE</span>
+                        </div>
+                        <div class="text-3xl font-black text-white mb-4">₹1,299 <span class="text-xs font-normal text-slate-400">/ month</span></div>
+                        <ul class="space-y-3 text-xs text-slate-200 mb-6">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-royal-gold"></i> FREE Entry to ALL Cash Prize Arenas</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-royal-gold"></i> 25% OFF Storewide + Custom Orders</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-royal-gold"></i> Monthly Mystery Gaming & Sticker Box</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-royal-gold"></i> VIP Royal Crown Badge & Direct Support</li>
+                        </ul>
+                    </div>
+                    <button onclick="triggerToast('Welcome to Royal VIP Monarch status!')" class="btn-3d-gold w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-royal-gold text-slate-950 text-xs font-black">
+                        Claim Royal VIP
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- LIVE COURIER TRACKING MODAL -->
+    <div id="trackingModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 border border-white/15 relative shadow-2xl my-8">
+            <button onclick="closeTrackingModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-sm">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h3 class="text-xl font-bold text-white mb-1"><i class="fa-solid fa-truck-fast text-emerald-400 mr-2"></i>Live Courier Tracking</h3>
+            <p class="text-xs text-slate-400 mb-6">Track your anime merchandise & gaming gear delivery status in real-time.</p>
+
+            <div class="space-y-4">
+                <div class="flex gap-2">
+                    <input type="text" id="trackInput" placeholder="Enter Order ID or Mobile (e.g. LZM-8089)" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-emerald-400">
+                    <button onclick="trackOrderSubmit()" class="px-5 py-2.5 rounded-xl bg-emerald-600 text-white font-bold text-xs flex items-center gap-2">
+                        <span>Search</span>
+                    </button>
+                </div>
+
+                <div id="trackingResult" class="hidden pt-4 border-t border-slate-800 space-y-4">
+                    <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs">
+                        <div>
+                            <span class="text-slate-400 block text-[10px]">AWB Tracking No.</span>
+                            <span class="font-mono text-emerald-400 font-bold">SR-IN-8849201</span>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-bold text-[10px]">IN TRANSIT</span>
+                    </div>
+
+                    <div class="relative pl-6 border-l-2 border-emerald-500/40 space-y-6 text-xs">
+                        <div class="relative">
+                            <span class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-emerald-500 border-4 border-slate-950"></span>
+                            <div class="font-bold text-white">Out for Delivery</div>
+                            <div class="text-[10px] text-slate-400">Patna Hub Courier Agent Dispatched • Today, 08:30 AM</div>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-slate-700 border-4 border-slate-950"></span>
+                            <div class="font-bold text-slate-300">Arrived at Destination Facility</div>
+                            <div class="text-[10px] text-slate-500">Patna Express Center • Yesterday, 11:20 PM</div>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-slate-700 border-4 border-slate-950"></span>
+                            <div class="font-bold text-slate-300">Package Dispatched</div>
+                            <div class="text-[10px] text-slate-500">Monarch Vault Warehouse • 2 Oct 2026</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WISHLIST MODAL -->
+    <div id="wishlistModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 border border-white/15 relative shadow-2xl my-8">
+            <button onclick="toggleWishlistModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-sm">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h3 class="text-xl font-bold text-white mb-1"><i class="fa-solid fa-heart text-pink-500 mr-2"></i>Your Saved Items</h3>
+            <p class="text-xs text-slate-400 mb-6">Your personal monarch wishlist collection.</p>
+
+            <div id="wishlistContent" class="space-y-3 max-h-80 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- PRODUCT VIEW / QUICK VIEW MODAL -->
+    <div id="productViewModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+        <div class="glass-panel w-full max-w-3xl rounded-3xl p-6 border border-white/15 relative shadow-2xl my-8">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-slate-900 border border-slate-700 text-slate-400 hover:text-white flex items-center justify-center text-sm transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div id="productModalContent" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <!-- Dynamic Content Rendered via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT & COURIER ADDRESS MODAL -->
+    <div id="checkoutModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 border border-white/15 relative shadow-2xl my-8">
+            <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-sm">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <h3 class="text-xl font-bold text-white mb-1"><i class="fa-solid fa-truck-fast text-royal-cyan mr-2"></i>Delivery & Payment Details</h3>
+            <p class="text-xs text-slate-400 mb-6">Order fulfillment & delivery via automated logistics courier partner.</p>
+
+            <form id="deliveryForm" onsubmit="processOrderPayment(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[11px] text-slate-300 font-semibold mb-1 block">Full Name *</label>
+                        <input type="text" id="custName" required placeholder="YOUR NAME" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-royal-cyan">
+                    </div>
+                    <div>
+                        <label class="text-[11px] text-slate-300 font-semibold mb-1 block">Phone Number *</label>
+                        <input type="tel" id="custPhone" required placeholder="MOB. NO." class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-royal-cyan">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[11px] text-slate-300 font-semibold mb-1 block">Email Address *</label>
+                    <input type="email" id="custEmail" required placeholder="youremail@example.com" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-royal-cyan">
+                </div>
+
+                <div>
+                    <label class="text-[11px] text-slate-300 font-semibold mb-1 block">Complete Shipping Address *</label>
+                    <textarea id="custAddress" required rows="2" placeholder="House/Flat No., Building Name, Street Area" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-royal-cyan"></textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-[11px] text-slate-300 font-semibold mb-1 block">Pincode *</label>
+                        <input type="text" id="custPincode" required onchange="checkCourierServiceability(this.value)" placeholder="000000" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-royal-cyan">
+                    </div>
+                    <div>
+                        <label class="text-[11px] text-slate-300 font-semibold mb-1 block">Delivery Partner</label>
+                        <div id="courierStatus" class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-emerald-400 font-semibold flex items-center gap-1">
+                            <i class="fa-solid fa-check-circle"></i> Shiprocket Express
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Options Selection -->
+                <div class="pt-2">
+                    <label class="text-[11px] text-slate-300 font-semibold mb-2 block">Select Payment Method *</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer border border-royal-accent bg-purple-950/40 rounded-xl p-2.5 flex items-center gap-2">
+                            <input type="radio" name="paymentMode" value="online" checked class="accent-purple-500">
+                            <div>
+                                <div class="text-xs font-bold text-white">Online Payment</div>
+                                <div class="text-[9px] text-slate-400">UPI, Cards, GPay, NetBanking</div>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer border border-slate-700 bg-slate-900 rounded-xl p-2.5 flex items-center gap-2">
+                            <input type="radio" name="paymentMode" value="cod" class="accent-purple-500">
+                            <div>
+                                <div class="text-xs font-bold text-white">Cash On Delivery</div>
+                                <div class="text-[9px] text-slate-400">Pay at your doorstep</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
+                    <div>
+                        <div class="text-[10px] text-slate-400">Total Payable Amount</div>
+                        <div id="checkoutTotal" class="text-lg font-black text-royal-gold">₹0</div>
+                    </div>
+                    <button type="submit" id="payBtn" class="btn-3d-gold px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-royal-gold text-slate-950 font-black text-xs uppercase tracking-wider">
+                        Place Order
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- AUTH MODAL: GOOGLE ONLY -->
+    <div id="authModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="glass-panel w-full max-w-md rounded-3xl p-6 border border-white/15 relative shadow-2xl animate-float">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-sm"><i class="fa-solid fa-xmark"></i></button>
+
+            <div class="text-center pt-2">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-royal-accent to-royal-cyan border border-white/15 flex items-center justify-center shadow-lg">
+                    <i class="fa-solid fa-crown text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-black text-white">Welcome to LazyMonarch</h3>
+                <p class="text-xs text-slate-400 mt-1 mb-6">Sign in securely with your Google account</p>
+
+                <button type="button" onclick="googleLogin()" class="btn-3d w-full py-3.5 rounded-xl bg-white text-slate-900 text-xs font-black flex items-center justify-center gap-3 hover:bg-slate-100 transition">
+                    <i class="fa-brands fa-google text-base"></i>
+                    Continue with Google
+                </button>
+
+                <p class="text-[9px] text-slate-500 mt-4">Your Google account will be used to create or access your LazyMonarch account.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACCOUNT MINI POPUP -->
+    <div id="accountPopup" class="hidden fixed top-20 right-5 md:right-8 z-[60] w-80 max-w-[calc(100vw-2rem)]">
+        <div class="glass-panel rounded-2xl p-4 border border-white/15 shadow-2xl backdrop-blur-xl">
+            <div class="flex items-center gap-3 pb-3 border-b border-slate-800">
+                <img id="accountPopupPhoto" src="" alt="Account" class="w-12 h-12 rounded-xl object-cover border border-purple-500/40 bg-slate-900">
+                <div class="min-w-0 flex-1">
+                    <div id="accountPopupName" class="text-sm font-black text-white truncate">Account</div>
+                    <div id="accountPopupEmail" class="text-[10px] text-slate-400 truncate">-</div>
+                </div>
+            </div>
+            <div class="mt-3 p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                <div class="flex items-center justify-between gap-3">
+                    <span class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Membership</span>
+                    <span id="accountMembershipStatus" class="px-2 py-1 rounded-lg bg-slate-800 text-slate-300 text-[9px] font-black">NOT ACTIVE</span>
+                </div>
+                <div id="accountMembershipPlan" class="text-xs font-bold text-white mt-1">No active membership</div>
+            </div>
+            <button onclick="googleLogout()" class="mt-3 w-full py-2.5 rounded-xl bg-red-950/60 border border-red-500/30 text-red-300 text-xs font-black flex items-center justify-center gap-2 hover:bg-red-900/70 transition">
+                <i class="fa-solid fa-right-from-bracket"></i> Log Out
+            </button>
+        </div>
+    </div>
+
+    <!-- CUSTOMER ORDERS MODAL -->
+    <div id="ordersModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+        <div class="glass-panel w-full max-w-2xl rounded-3xl p-6 border border-white/15 relative shadow-2xl my-8">
+            <button onclick="closeOrdersModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-sm"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-xl font-bold text-white mb-1"><i class="fa-solid fa-box-open text-royal-cyan mr-2"></i>My Orders</h3>
+            <p class="text-xs text-slate-400 mb-6">View your purchased products, payment status and order IDs.</p>
+            <div id="ordersList" class="space-y-3 max-h-[65vh] overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed top-20 right-5 z-50 transform translate-x-80 opacity-0 transition-all duration-300 glass-panel px-4 py-3 rounded-xl border border-royal-accent/40 text-white text-xs font-semibold flex items-center gap-3 shadow-2xl">
+        <div class="icon-3d w-7 h-7 rounded-lg bg-royal-cyan/20 border border-royal-cyan/40 flex items-center justify-center text-royal-cyan">
+            <i class="fa-solid fa-check text-xs"></i>
+        </div>
+        <span id="toastMsg">Action completed!</span>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="mt-16 border-t border-slate-800/80 bg-slate-950 py-10 text-slate-500 text-xs text-center relative z-10">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <img src="download.png" alt="LAZYMONARCH" class="brand-logo-img h-8 w-auto object-contain bg-transparent" onerror="this.onerror=null; this.src='https://placehold.co/120x35/0a0b10/a855f7?text=LAZY+MONARCH';">
+                <span>© 2026 Esports & Anime Merch Realm. All rights reserved.</span>
+            </div>
+            <div class="flex gap-6 text-[11px]">
+                <a href="#home" class="hover:text-white transition-colors">Home</a>
+                <a href="#tournaments" class="hover:text-white transition-colors">Tournaments</a>
+                <a href="#shop" class="hover:text-white transition-colors">Anime Shop</a>
+                <a href="#membership" class="hover:text-white transition-colors">VIP Pass</a>
+            </div>
+        </div>
+    </footer>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBnDGSg_K60_Tp7w13c-O8Jb9hLkErSCY8",
+    authDomain: "gamexd-110.firebaseapp.com",
+    projectId: "gamexd-110",
+    storageBucket: "gamexd-110.firebasestorage.app",
+    messagingSenderId: "501792431454",
+    appId: "1:501792431454:web:10024d189316ef9e2303cf"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+
+  window.googleLogin = async function () {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      if (result.user) {
+        window.closeAuthModal();
+        window.triggerToast(`Welcome, ${result.user.displayName || 'Monarch Gamer'}!`);
+      }
+    } catch (error) {
+      console.error('Google Login Error:', error);
+      if (error.code === 'auth/popup-closed-by-user') return;
+      window.triggerToast(error.message || 'Google login failed.');
+    }
+  };
+
+  window.googleLogout = async function () {
+    try {
+      await signOut(auth);
+      window.closeAccountPopup();
+      window.triggerToast('Logged out successfully.');
+    } catch (error) {
+      console.error('Logout Error:', error);
+      window.triggerToast(error.message || 'Logout failed.');
+    }
+  };
+
+  onAuthStateChanged(auth, (user) => {
+    if (window.applyFirebaseUser) window.applyFirebaseUser(user);
+  });
+</script>
+    <script>
+        const TOURNAMENTS = [
+            {
+                id: 't1',
+                type: 'tournament',
+                name: "Valorant Monarch Championship",
+                category: "live",
+                prize: "₹50,000",
+                teams: "64/64 Teams",
+                gameIcon: "fa-crosshairs",
+                iconBg: "bg-red-950 border-red-500/50 text-red-400",
+                badge: "LIVE NOW",
+                badgeBg: "bg-red-500/20 text-red-400 border-red-500/40",
+                desc: "Official 5v5 tactical shooter arena. Watch stream or track live bracket scores."
+            },
+            {
+                id: 't2',
+                type: 'tournament',
+                name: "BGMI / PUBG Survival Royal",
+                category: "upcoming",
+                prize: "₹30,000",
+                teams: "32 Squad Slots Left",
+                gameIcon: "fa-shield-halved",
+                iconBg: "bg-amber-950 border-amber-500/50 text-royal-gold",
+                badge: "REGISTRATION OPEN",
+                badgeBg: "bg-amber-500/20 text-royal-gold border-amber-500/40",
+                desc: "Squad battle royale showdown on Miramar & Erangel. Cash rewards for top 5 squads."
+            },
+            {
+                id: 't3',
+                type: 'tournament',
+                name: "Tekken 8 Anime Showdown",
+                category: "upcoming",
+                prize: "₹15,000",
+                teams: "128 Players Max",
+                gameIcon: "fa-hand-fist",
+                iconBg: "bg-purple-950 border-purple-500/50 text-purple-400",
+                badge: "REGISTRATION OPEN",
+                badgeBg: "bg-purple-500/20 text-purple-300 border-purple-500/40",
+                desc: "Double elimination 1v1 fighting game tournament. Custom anime trophy for 1st place."
+            }
+        ];
+
+        /* PRODUCTS DATA WITH IMAGES, REVIEWS, OFFERS */
+        const PRODUCTS = [
+            {
+                id: 'p1',
+                type: 'product',
+                name: "Gojo Satoru Holographic Sticker Pack",
+                category: "stickers",
+                price: 499,
+                originalPrice: 799,
+                discount: "38% OFF",
+                rating: 5.0,
+                reviews: 248,
+                views: "3.4k",
+                image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=600&auto=format&fit=crop&q=80",
+                badge: "Anime Vinyl",
+                badgeColor: "bg-cyan-950 border-cyan-500/40 text-royal-cyan",
+                desc: "Waterproof, UV-resistant 3D holographic Jujutsu Kaisen anime stickers for laptops & cars."
+            },
+            {
+                id: 'p2',
+                type: 'product',
+                name: "Cyberpunk RGB Mechanical Keycaps",
+                category: "gear",
+                price: 1899,
+                originalPrice: 2499,
+                discount: "24% OFF",
+                rating: 4.9,
+                reviews: 182,
+                views: "2.8k",
+                image: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=600&auto=format&fit=crop&q=80",
+                badge: "Gaming Gear",
+                badgeColor: "bg-purple-950 border-purple-500/40 text-purple-300",
+                desc: "Custom PBT double-shot keycaps with Japanese kanji side-engravings & shine-through font."
+            },
+            {
+                id: 'p3',
+                type: 'product',
+                name: "Solo Leveling XXL Gaming Desk Pad",
+                category: "custom",
+                price: 1299,
+                originalPrice: 1999,
+                discount: "35% OFF",
+                rating: 4.8,
+                reviews: 310,
+                views: "5.1k",
+                image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&auto=format&fit=crop&q=80",
+                badge: "Despad",
+                badgeColor: "bg-indigo-950 border-indigo-500/40 text-indigo-300",
+                desc: "Stitched edge ultra-smooth speed surface gaming mouse mat featuring Sung Jinwoo art."
+            },
+            {
+                id: 'p4',
+                type: 'product',
+                name: "Ultralight Wireless Esports Mouse (49g)",
+                category: "gear",
+                price: 3499,
+                originalPrice: 4999,
+                discount: "30% OFF",
+                rating: 4.9,
+                reviews: 95,
+                views: "1.9k",
+                image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=600&auto=format&fit=crop&q=80",
+                badge: "Hardware",
+                badgeColor: "bg-emerald-950 border-emerald-500/40 text-emerald-400",
+                desc: "Ultra-lightweight 49g wireless mouse with 26K DPI optical sensor & zero latency connection."
+            },
+            {
+                id: 'p5',
+                type: 'product',
+                name: "Evangelion Unit-01 3D LED Acrylic Sign",
+                category: "custom",
+                price: 1999,
+                originalPrice: 2999,
+                discount: "33% OFF",
+                rating: 5.0,
+                reviews: 140,
+                views: "4.2k",
+                image: "https://images.unsplash.com/photo-1563089145-599997674d42?w=600&auto=format&fit=crop&q=80",
+                badge: "Neon Sign",
+                badgeColor: "bg-pink-950 border-pink-500/40 text-royal-pink",
+                desc: "RGB touch-controlled 3D illusion LED light lamp for battle-station room aesthetic."
+            },
+            {
+                id: 'p6',
+                type: 'product',
+                name: "Attack on Titan Vinyl Decal Crest Pack",
+                category: "stickers",
+                price: 399,
+                originalPrice: 599,
+                discount: "33% OFF",
+                rating: 4.7,
+                reviews: 88,
+                views: "1.5k",
+                image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=80",
+                badge: "Anime Vinyl",
+                badgeColor: "bg-amber-950 border-amber-500/40 text-royal-gold",
+                desc: "15-piece Survey Corps scout crest & titan decal bundle made with high durability vinyl."
+            }
+        ];
+
+        /* STATE VARIABLES */
+        let orders = JSON.parse(localStorage.getItem('lazymonarch_orders') || '[]');
+        let wishlist = [];
+        let currentUser = null;
+        let currentTournamentFilter = 'all';
+        let currentShopFilter = 'all';
+        let directBuyItem = null;
+        let viewQuantity = 1;
+
+        /* RENDER TOURNAMENTS */
+        function renderTournaments(items) {
+            const grid = document.getElementById('tournamentsGrid');
+            grid.innerHTML = items.map(t => `
+                <div class="tilt-card icon-3d-hover glass-panel rounded-2xl p-5 border border-white/10 flex flex-col justify-between group hover:border-royal-gold/50 transition-all">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="icon-3d w-12 h-12 rounded-2xl ${t.iconBg} flex items-center justify-center text-xl">
+                                <i class="fa-solid ${t.gameIcon}"></i>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full border ${t.badgeBg} text-[10px] font-extrabold tracking-wider">${t.badge}</span>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-1 group-hover:text-royal-gold transition-colors">${t.name}</h3>
+                        <p class="text-slate-400 text-xs mb-4 leading-relaxed">${t.desc}</p>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                        <div>
+                            <div class="text-[10px] text-slate-400 uppercase font-bold">Prize Pool</div>
+                            <div class="text-base font-black text-royal-gold">${t.prize}</div>
+                        </div>
+                        <button onclick="registerTournament('${t.name}')" class="btn-3d-gold px-3.5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-royal-gold text-slate-950 font-black text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-gamepad"></i>
+                            <span>Register Squad</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* RENDER SHOP PRODUCTS */
+        function renderShop(items) {
+            const grid = document.getElementById('shopGrid');
+            const noResults = document.getElementById('noResults');
+
+            if (!items || items.length === 0) {
+                grid.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            grid.innerHTML = items.map(p => {
+                const isSaved = wishlist.includes(p.id);
+                return `
+                <div class="tilt-card glass-panel rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-between group hover:border-royal-cyan/50 transition-all relative">
+                    <div>
+                        <!-- Product Image Box -->
+                        <div class="relative h-48 w-full overflow-hidden bg-slate-950 cursor-pointer" onclick="openProductModal('${p.id}')">
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-80"></div>
+                            
+                            <!-- Quick View Overlay -->
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-slate-950/40 backdrop-blur-[2px]">
+                                <span class="px-3 py-1.5 rounded-xl bg-slate-900/90 border border-royal-cyan/50 text-royal-cyan font-bold text-xs flex items-center gap-2 shadow-xl">
+                                    <i class="fa-solid fa-eye"></i> Quick View
+                                </span>
+                            </div>
+
+                            <!-- Offer Tag -->
+                            <span class="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-red-600/90 text-white font-black text-[10px] uppercase shadow-lg backdrop-blur-md">
+                                ${p.discount}
+                            </span>
+
+                            <!-- Wishlist Toggle Button -->
+                            <button onclick="event.stopPropagation(); toggleWishlist('${p.id}')" class="absolute top-3 right-3 w-8 h-8 rounded-xl bg-slate-950/80 border border-white/10 ${isSaved ? 'text-pink-500' : 'text-slate-400'} hover:text-pink-500 flex items-center justify-center backdrop-blur-md transition-colors z-10">
+                                <i class="fa-solid fa-heart text-xs"></i>
+                            </button>
+
+                            <!-- Category Badge -->
+                            <span class="absolute bottom-3 left-3 px-2.5 py-0.5 rounded-full border ${p.badgeColor} text-[9px] font-bold uppercase tracking-wider backdrop-blur-md">
+                                ${p.badge}
+                            </span>
+                        </div>
+
+                        <!-- Product Info Details -->
+                        <div class="p-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="flex items-center text-royal-gold text-xs">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span class="ml-1 font-bold text-white text-xs">${p.rating}</span>
+                                </div>
+                                <span class="text-[10px] text-slate-400 font-medium">(${p.reviews} reviews)</span>
+                            </div>
+
+                            <h3 onclick="openProductModal('${p.id}')" class="text-sm font-bold text-white mb-1.5 line-clamp-1 group-hover:text-royal-cyan transition-colors cursor-pointer">${p.name}</h3>
+                            <p class="text-slate-400 text-[11px] leading-relaxed line-clamp-2 mb-4">${p.desc}</p>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer -->
+                    <div class="p-4 pt-0">
+                        <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between mb-3">
+                            <div>
+                                <div class="text-[9px] text-slate-400 font-semibold uppercase">Special Price</div>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-base font-black text-white">₹${p.price}</span>
+                                    <span class="text-xs text-slate-500 line-through">₹${p.originalPrice}</span>
+                                </div>
+                            </div>
+                            <button onclick="openProductModal('${p.id}')" class="p-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-400 hover:text-white hover:border-royal-cyan/50 transition-colors text-xs" title="Quick View">
+                                <i class="fa-solid fa-expand"></i>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="directBuy('${p.id}')" class="btn-3d-gold py-2 rounded-xl bg-gradient-to-r from-amber-500 to-royal-gold text-slate-950 font-black text-xs flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-bolt text-xs"></i>
+                                <span>Buy Now</span>
+                            </button>
+                            <button onclick="directBuy('${p.id}')" class="btn-3d py-2 rounded-xl bg-slate-900 border border-slate-700/80 text-white font-bold text-xs flex items-center justify-center gap-1.5 hover:bg-slate-800">
+                                <i class="fa-solid fa-credit-card text-xs text-royal-cyan"></i>
+                                <span>Pay Securely</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+        }
+
+        /* WISHLIST TOGGLE */
+        function toggleWishlist(productId) {
+            const index = wishlist.indexOf(productId);
+            if (index > -1) {
+                wishlist.splice(index, 1);
+                triggerToast('Removed from wishlist');
+            } else {
+                wishlist.push(productId);
+                triggerToast('Saved to wishlist!');
+            }
+            document.getElementById('wishlistBadge').innerText = wishlist.length;
+            renderShop(PRODUCTS);
+        }
+
+        function toggleWishlistModal() {
+            const modal = document.getElementById('wishlistModal');
+            const content = document.getElementById('wishlistContent');
+            
+            if (modal.classList.contains('hidden')) {
+                const savedItems = PRODUCTS.filter(p => wishlist.includes(p.id));
+                if (savedItems.length === 0) {
+                    content.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">Your wishlist is empty!</p>`;
+                } else {
+                    content.innerHTML = savedItems.map(p => `
+                        <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+                            <div class="flex items-center gap-3">
+                                <img src="${p.image}" class="w-10 h-10 rounded-lg object-cover">
+                                <div>
+                                    <div class="text-xs font-bold text-white max-w-[160px] truncate">${p.name}</div>
+                                    <div class="text-[10px] text-royal-gold font-bold">₹${p.price}</div>
+                                </div>
+                            </div>
+                            <button onclick="directBuy('${p.id}'); toggleWishlistModal();" class="px-3 py-1.5 rounded-lg bg-royal-accent text-white font-bold text-[10px]">Buy Now</button>
+                        </div>
+                    `).join('');
+                }
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        /* TRACKING MODAL FUNCTIONS */
+        function openTrackingModal() {
+            document.getElementById('trackingModal').classList.remove('hidden');
+        }
+        function closeTrackingModal() {
+            document.getElementById('trackingModal').classList.add('hidden');
+        }
+        function trackOrderSubmit() {
+            const val = document.getElementById('trackInput').value.trim();
+            if(val !== '') {
+                document.getElementById('trackingResult').classList.remove('hidden');
+            } else {
+                triggerToast('Please enter order details');
+            }
+        }
+
+        /* PRODUCT VIEW MODAL FUNCTIONS */
+        function openProductModal(productId) {
+            const product = PRODUCTS.find(p => p.id === productId);
+            if (!product) return;
+
+            viewQuantity = 1;
+            const container = document.getElementById('productModalContent');
+            
+            container.innerHTML = `
+                <div class="relative h-64 md:h-80 w-full rounded-2xl overflow-hidden bg-slate-950 border border-white/10 group">
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent"></div>
+                    <span class="absolute top-3 left-3 px-3 py-1 rounded-lg bg-red-600/90 text-white font-black text-xs uppercase shadow-lg backdrop-blur-md">
+                        ${product.discount}
+                    </span>
+                    <span class="absolute bottom-3 left-3 px-3 py-1 rounded-full border ${product.badgeColor} text-xs font-bold uppercase tracking-wider backdrop-blur-md">
+                        ${product.badge}
+                    </span>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <div class="flex items-center text-royal-gold text-xs">
+                                <i class="fa-solid fa-star"></i>
+                                <span class="ml-1 font-bold text-white">${product.rating}</span>
+                            </div>
+                            <span class="text-xs text-slate-400 font-medium">(${product.reviews} customer reviews)</span>
+                            <span class="text-xs text-royal-cyan font-bold ml-auto"><i class="fa-solid fa-eye"></i> ${product.views} views</span>
+                        </div>
+                        <h2 class="text-xl font-black text-white leading-snug">${product.name}</h2>
+                    </div>
+
+                    <div class="p-3 rounded-2xl bg-slate-900/80 border border-slate-800/80 flex items-baseline justify-between">
+                        <div>
+                            <span class="text-[10px] text-slate-400 block font-semibold uppercase">Price</span>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-2xl font-black text-white">₹${product.price}</span>
+                                <span class="text-sm text-slate-500 line-through">₹${product.originalPrice}</span>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-xs">In Stock</span>
+                    </div>
+
+                    <p class="text-xs text-slate-300 leading-relaxed">${product.desc}</p>
+
+                    <div class="flex items-center gap-3 pt-2">
+                        <span class="text-xs font-semibold text-slate-400">Quantity:</span>
+                        <div class="flex items-center bg-slate-900 border border-slate-700 rounded-xl overflow-hidden">
+                            <button onclick="updateViewQty(-1)" class="px-3 py-1.5 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-xs font-bold">-</button>
+                            <span id="viewQtyVal" class="px-3 text-xs font-bold text-white font-mono">1</span>
+                            <button onclick="updateViewQty(1)" class="px-3 py-1.5 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-xs font-bold">+</button>
+                        </div>
+                    </div>
+
+                    <button onclick="buyModalItem('${product.id}')" class="btn-3d-gold w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-royal-gold text-slate-950 font-black text-xs flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>Buy Now & Pay Securely</span>
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('productViewModal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productViewModal').classList.add('hidden');
+        }
+
+        function updateViewQty(change) {
+            viewQuantity += change;
+            if (viewQuantity < 1) viewQuantity = 1;
+            const valElem = document.getElementById('viewQtyVal');
+            if (valElem) valElem.innerText = viewQuantity;
+        }
+
+        function buyModalItem(productId) {
+            const item = PRODUCTS.find(p => p.id === productId);
+            if (!item) return;
+            directBuyItem = { ...item, price: item.price, qty: viewQuantity };
+            closeProductModal();
+            openCheckoutModal('direct');
+        }
+
+        /* CLIENT-SIDE UNIFIED SEARCH */
+        function handleSearch(query) {
+            const cleanQuery = query.toLowerCase().trim();
+            const desktopInput = document.getElementById('desktopSearchInput');
+            const mobileInput = document.getElementById('mobileSearchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            const mobClearBtn = document.getElementById('mobileClearSearchBtn');
+            const dropdown = document.getElementById('searchDropdown');
+            const searchResultsList = document.getElementById('searchResultsList');
+            const searchResultCount = document.getElementById('searchResultCount');
+            const searchStatus = document.getElementById('searchStatus');
+            const searchQueryTerm = document.getElementById('searchQueryTerm');
+
+            if (document.activeElement === desktopInput) mobileInput.value = query;
+            if (document.activeElement === mobileInput) desktopInput.value = query;
+
+            if (cleanQuery !== '') {
+                clearBtn.classList.remove('hidden');
+                if (mobClearBtn) mobClearBtn.classList.remove('hidden');
+
+                const matchedTournaments = TOURNAMENTS.filter(t => 
+                    t.name.toLowerCase().includes(cleanQuery) || 
+                    t.desc.toLowerCase().includes(cleanQuery)
+                );
+                const matchedProducts = PRODUCTS.filter(p => 
+                    p.name.toLowerCase().includes(cleanQuery) || 
+                    p.desc.toLowerCase().includes(cleanQuery) ||
+                    p.badge.toLowerCase().includes(cleanQuery)
+                );
+
+                const totalMatched = matchedTournaments.length + matchedProducts.length;
+                searchResultCount.innerText = `${totalMatched} found`;
+
+                renderShop(matchedProducts);
+                renderTournaments(matchedTournaments);
+
+                searchStatus.classList.remove('hidden');
+                searchQueryTerm.innerText = `"${query}"`;
+
+                if (totalMatched > 0) {
+                    let dropdownHTML = '';
+                    
+                    matchedTournaments.forEach(t => {
+                        dropdownHTML += `
+                            <div onclick="scrollToSection('tournaments')" class="p-2 rounded-xl hover:bg-slate-800/80 cursor-pointer flex items-center justify-between gap-2 border border-transparent hover:border-amber-500/40">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 rounded-lg ${t.iconBg} flex items-center justify-center text-xs">
+                                        <i class="fa-solid ${t.gameIcon}"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs font-bold text-white">${t.name}</div>
+                                        <div class="text-[10px] text-royal-gold font-semibold">[TOURNAMENT] ${t.prize}</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-arrow-right text-[10px] text-royal-gold"></i>
+                            </div>
+                        `;
+                    });
+
+                    matchedProducts.forEach(p => {
+                        dropdownHTML += `
+                            <div onclick="openProductModal('${p.id}')" class="p-2 rounded-xl hover:bg-slate-800/80 cursor-pointer flex items-center justify-between gap-2 border border-transparent hover:border-royal-cyan/40">
+                                <div class="flex items-center gap-2.5">
+                                    <img src="${p.image}" class="w-7 h-7 rounded-lg object-cover">
+                                    <div>
+                                        <div class="text-xs font-bold text-white">${p.name}</div>
+                                        <div class="text-[10px] text-royal-cyan font-semibold">[SHOP] ₹${p.price}</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-arrow-right text-[10px] text-royal-cyan"></i>
+                            </div>
+                        `;
+                    });
+
+                    searchResultsList.innerHTML = dropdownHTML;
+                    dropdown.classList.remove('hidden');
+                } else {
+                    searchResultsList.innerHTML = `<div class="p-3 text-center text-xs text-slate-400">No items or arenas matched</div>`;
+                    dropdown.classList.remove('hidden');
+                }
+            } else {
+                clearSearch();
+            }
+        }
+
+        function scrollToSection(id) {
+            document.getElementById('searchDropdown').classList.add('hidden');
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function clearSearch() {
+            document.getElementById('desktopSearchInput').value = '';
+            document.getElementById('mobileSearchInput').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            const mobClearBtn = document.getElementById('mobileClearSearchBtn');
+            if (mobClearBtn) mobClearBtn.classList.add('hidden');
+
+            document.getElementById('searchDropdown').classList.add('hidden');
+            document.getElementById('searchStatus').classList.add('hidden');
+            
+            filterTournaments(currentTournamentFilter);
+            filterShop(currentShopFilter);
+        }
+
+        /* CATEGORY FILTERS */
+        function filterTournaments(cat, btn) {
+            currentTournamentFilter = cat;
+            if (btn) {
+                document.querySelectorAll('.tourney-btn').forEach(b => {
+                    b.classList.remove('bg-royal-accent', 'text-white');
+                    b.classList.add('bg-slate-900', 'text-slate-300');
+                });
+                btn.classList.remove('bg-slate-900', 'text-slate-300');
+                btn.classList.add('bg-royal-accent', 'text-white');
+            }
+            if (cat === 'all') renderTournaments(TOURNAMENTS);
+            else renderTournaments(TOURNAMENTS.filter(t => t.category === cat));
+        }
+
+        function filterShop(cat, btn) {
+            currentShopFilter = cat;
+            if (btn) {
+                document.querySelectorAll('.shop-btn').forEach(b => {
+                    b.classList.remove('bg-royal-accent', 'text-white');
+                    b.classList.add('bg-slate-900', 'text-slate-300');
+                });
+                btn.classList.remove('bg-slate-900', 'text-slate-300');
+                btn.classList.add('bg-royal-accent', 'text-white');
+            }
+            if (cat === 'all') renderShop(PRODUCTS);
+            else renderShop(PRODUCTS.filter(p => p.category === cat));
+        }
+
+        /* ORDERS & DIRECT BUY MANAGEMENT */
+        function saveOrders() {
+            localStorage.setItem('lazymonarch_orders', JSON.stringify(orders));
+            updateOrdersUI();
+        }
+
+        function updateOrdersUI() {
+            const count = orders.length;
+            const badge = document.getElementById('ordersBadge');
+            const mobileBadge = document.getElementById('mobileOrdersBadge');
+            if (badge) badge.innerText = count;
+            if (mobileBadge) mobileBadge.innerText = count;
+        }
+
+        function getOrderStatusClass(status) {
+            if (status === 'Paid') return 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+            if (status === 'Cancelled' || status === 'Refunded') return 'bg-red-500/10 text-red-400 border border-red-500/30';
+            return 'bg-amber-500/10 text-amber-400 border border-amber-500/30';
+        }
+
+        function openOrdersModal() {
+            const modal = document.getElementById('ordersModal');
+            const list = document.getElementById('ordersList');
+            if (!orders.length) {
+                list.innerHTML = `<div class="py-12 text-center text-xs text-slate-500"><i class="fa-solid fa-box-open text-3xl mb-3 block"></i>No orders yet. Your successful purchases will appear here.</div>`;
+            } else {
+                list.innerHTML = orders.slice().reverse().map(o => {
+                    const canCancel = ['Paid', 'COD Confirmed'].includes(o.status);
+                    const cancelText = o.status === 'Paid' ? 'Cancel & Refund' : 'Cancel Order';
+                    return `
+                    <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+                        <div class="flex items-center justify-between gap-3">
+                            <div><div class="text-[10px] text-slate-500 uppercase font-bold">Order ID</div><div class="font-mono text-xs text-royal-cyan font-bold">${o.id}</div></div>
+                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${getOrderStatusClass(o.status)}">${o.status}</span>
+                        </div>
+                        <div class="space-y-1">${o.items.map(i => `<div class="flex justify-between text-xs"><span class="text-slate-300">${i.name} × ${i.qty}</span><span class="font-bold text-white">₹${i.price * i.qty}</span></div>`).join('')}</div>
+                        <div class="pt-2 border-t border-slate-800 flex items-center justify-between gap-3 text-xs">
+                            <span class="text-slate-400">${new Date(o.createdAt).toLocaleString()}</span>
+                            <span class="font-black text-royal-gold">₹${o.amount}</span>
+                        </div>
+                        ${canCancel ? `<button onclick="cancelOrder('${o.id}')" class="w-full mt-1 px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 hover:bg-red-500/20 font-bold text-xs transition-all"><i class="fa-solid fa-ban mr-2"></i>${cancelText}</button>` : ''}
+                        ${o.status === 'Cancelled' && o.refundStatus ? `<div class="text-[10px] text-slate-500">Refund: ${o.refundStatus}</div>` : ''}
+                    </div>`;
+                }).join('');
+            }
+            modal.classList.remove('hidden');
+        }
+
+        async function cancelOrder(orderId) {
+            const index = orders.findIndex(o => o.id === orderId);
+            if (index < 0) return;
+            const order = orders[index];
+            if (!['Paid', 'COD Confirmed'].includes(order.status)) return;
+            const paidOrder = order.status === 'Paid';
+            const message = paidOrder
+                ? 'Cancel this paid order? A refund request will be sent to Razorpay.'
+                : 'Cancel this COD order?';
+            if (!confirm(message)) return;
+
+            if (paidOrder) {
+                try {
+                    const response = await fetch(`${PAYMENT_API_BASE}/api/refund-payment`, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ paymentId: order.paymentId, amount: order.amount * 100 })
+                    });
+                    const result = await response.json();
+                    if (!response.ok || !result.refunded) throw new Error(result.error || 'Refund could not be started.');
+                    order.status = 'Cancelled';
+                    order.refundStatus = 'Refund initiated';
+                    order.cancelledAt = new Date().toISOString();
+                } catch (err) {
+                    triggerToast(err.message || 'Unable to cancel/refund this order.');
+                    return;
+                }
+            } else {
+                order.status = 'Cancelled';
+                order.refundStatus = 'Not applicable (COD)';
+                order.cancelledAt = new Date().toISOString();
+            }
+            saveOrders();
+            openOrdersModal();
+            triggerToast(paidOrder ? 'Order cancelled and refund initiated.' : 'Order cancelled successfully.');
+        }
+
+        function closeOrdersModal() { document.getElementById('ordersModal').classList.add('hidden'); }
+
+        function directBuy(productId) {
+            const item = PRODUCTS.find(p => p.id === productId);
+            if (!item) return;
+            directBuyItem = { ...item, qty: 1 };
+            openCheckoutModal('direct');
+        }
+
+        /* CHECKOUT + RAZORPAY PAYMENT */
+        const PAYMENT_API_BASE = window.PAYMENT_API_BASE || '';
+
+        function openCheckoutModal(mode = 'direct') {
+            if (!directBuyItem) { triggerToast('Please select a product first.'); return; }
+            const totalAmount = directBuyItem.price * (directBuyItem.qty || 1);
+            document.getElementById('checkoutTotal').innerText = `₹${totalAmount}`;
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+            directBuyItem = null;
+        }
+
+        function checkCourierServiceability(pincode) {
+            const courierStatus = document.getElementById('courierStatus');
+            courierStatus.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-royal-cyan"></i> Checking Courier...`;
+            setTimeout(() => {
+                courierStatus.innerHTML = pincode.length === 6
+                    ? `<i class="fa-solid fa-circle-check text-emerald-400"></i> Service Available`
+                    : `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Enter 6-digit Pincode`;
+            }, 400);
+        }
+
+        async function processOrderPayment(e) {
+            e.preventDefault();
+            if (!directBuyItem) return;
+            const payBtn = document.getElementById('payBtn');
+            const paymentMode = document.querySelector('input[name="paymentMode"]:checked').value;
+            const item = { ...directBuyItem, qty: directBuyItem.qty || 1 };
+            const amount = item.price * item.qty;
+            const customer = {
+                name: document.getElementById('custName').value.trim(),
+                email: document.getElementById('custEmail').value.trim(),
+                phone: document.getElementById('custPhone').value.trim(),
+                address: document.getElementById('custAddress').value.trim(),
+                pincode: document.getElementById('custPincode').value.trim()
+            };
+            payBtn.disabled = true; payBtn.innerText = 'Processing...';
+
+            const createOrder = async () => {
+                const response = await fetch(`${PAYMENT_API_BASE}/api/create-order`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount, currency: 'INR', customer, items: [item] })
+                });
+                if (!response.ok) throw new Error('Could not create payment order.');
+                return response.json();
+            };
+
+            try {
+                if (paymentMode === 'cod') {
+                    const order = { id: 'LZM-' + Date.now(), status: 'COD Confirmed', amount, items: [item], customer, paymentId: null, createdAt: new Date().toISOString() };
+                    orders.push(order); saveOrders(); closeCheckoutModal();
+                    triggerToast('COD order confirmed!');
+                    return;
+                }
+
+                const razorOrder = await createOrder();
+                if (!razorOrder.keyId || !razorOrder.orderId) throw new Error('Invalid payment configuration.');
+
+                const options = {
+                    key: razorOrder.keyId, order_id: razorOrder.orderId, amount: razorOrder.amount, currency: razorOrder.currency || 'INR',
+                    name: 'LazyMonarch', description: item.name, prefill: customer,
+                    theme: { color: '#7c3aed' },
+                    handler: async function (payment) {
+                        try {
+                            const verify = await fetch(`${PAYMENT_API_BASE}/api/verify-payment`, {
+                                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ ...payment, customer, items: [item], amount })
+                            });
+                            const result = await verify.json();
+                            if (!verify.ok || !result.verified) throw new Error('Payment verification failed.');
+                            orders.push({ id: razorOrder.orderId, status: 'Paid', amount, items: [item], customer, paymentId: payment.razorpay_payment_id, createdAt: new Date().toISOString() });
+                            saveOrders(); closeCheckoutModal(); triggerToast('Payment successful! Order confirmed.');
+                        } catch (err) { triggerToast(err.message || 'Payment verification failed.'); }
+                        finally { payBtn.disabled = false; payBtn.innerText = 'Place Order'; }
+                    },
+                    modal: { ondismiss: function () { payBtn.disabled = false; payBtn.innerText = 'Place Order'; } }
+                };
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function () { triggerToast('Payment failed. Please try again.'); payBtn.disabled = false; payBtn.innerText = 'Place Order'; });
+                rzp.open();
+            } catch (err) {
+                payBtn.disabled = false; payBtn.innerText = 'Place Order';
+                triggerToast(err.message || 'Payment service unavailable.');
+            }
+        }
+
+        /* AUTH & LOGIN SYSTEM - FIREBASE GOOGLE */
+        function openAuthModal() {
+            if (currentUser) {
+                openAccountPopup();
+                return;
+            }
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function openAccountPopup() {
+            if (!currentUser) {
+                openAuthModal();
+                return;
+            }
+            const popup = document.getElementById('accountPopup');
+            if (popup) popup.classList.toggle('hidden');
+        }
+
+        function closeAccountPopup() {
+            const popup = document.getElementById('accountPopup');
+            if (popup) popup.classList.add('hidden');
+        }
+
+        function getMembershipForUser(user) {
+            if (!user) return { active: false, plan: 'No active membership' };
+            try {
+                const saved = localStorage.getItem(`lazymonarch_membership_${user.uid}`);
+                if (!saved) return { active: false, plan: 'No active membership' };
+                const data = JSON.parse(saved);
+                return {
+                    active: data.active === true,
+                    plan: data.plan || 'Active Membership'
+                };
+            } catch (_) {
+                return { active: false, plan: 'No active membership' };
+            }
+        }
+
+        function applyFirebaseUser(user) {
+            currentUser = user || null;
+            updateAuthUI(user);
+
+            if (user) {
+                closeAuthModal();
+            } else {
+                closeAccountPopup();
+            }
+        }
+        window.applyFirebaseUser = applyFirebaseUser;
+
+        function updateAuthUI(user = currentUser) {
+            const container = document.getElementById('authBtnContainer');
+            const mobileTopUserText = document.getElementById('mobileTopUserText');
+            const popupPhoto = document.getElementById('accountPopupPhoto');
+            const popupName = document.getElementById('accountPopupName');
+            const popupEmail = document.getElementById('accountPopupEmail');
+            const membershipStatus = document.getElementById('accountMembershipStatus');
+            const membershipPlan = document.getElementById('accountMembershipPlan');
+
+            if (!container) return;
+
+            if (user) {
+                const name = user.displayName || 'Monarch Gamer';
+                const photo = user.photoURL || '';
+                const initial = name.charAt(0).toUpperCase();
+                const membership = getMembershipForUser(user);
+
+                container.innerHTML = `
+                    <button type="button" onclick="openAccountPopup()" class="flex items-center gap-2.5 group">
+                        <div class="w-9 h-9 rounded-xl overflow-hidden bg-purple-900 border border-purple-500/50 flex items-center justify-center text-royal-gold font-black text-xs shadow-lg group-hover:scale-105 transition-transform">
+                            ${photo ? `<img src="${photo}" alt="Account" class="w-full h-full object-cover">` : initial}
+                        </div>
+                        <div class="text-left hidden lg:block">
+                            <div class="text-xs font-bold text-white leading-none max-w-[120px] truncate">${name}</div>
+                            <div class="text-[9px] text-royal-gold font-semibold leading-tight">My Account</div>
+                        </div>
+                    </button>
+                `;
+
+                if (mobileTopUserText) mobileTopUserText.innerText = name.substring(0, 10);
+                if (popupPhoto) {
+                    popupPhoto.src = photo || '';
+                    popupPhoto.style.display = photo ? 'block' : 'none';
+                }
+                if (popupName) popupName.innerText = name;
+                if (popupEmail) popupEmail.innerText = user.email || '';
+                if (membershipStatus) {
+                    membershipStatus.innerText = membership.active ? 'ACTIVE' : 'NOT ACTIVE';
+                    membershipStatus.className = membership.active
+                        ? 'px-2 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 text-[9px] font-black'
+                        : 'px-2 py-1 rounded-lg bg-slate-800 text-slate-300 text-[9px] font-black';
+                }
+                if (membershipPlan) membershipPlan.innerText = membership.active ? membership.plan : 'No active membership';
+            } else {
+                container.innerHTML = `
+                    <button onclick="openAuthModal()" class="btn-3d px-4 py-2 rounded-xl bg-gradient-to-r from-royal-accent to-indigo-600 text-white font-bold text-xs flex items-center gap-2">
+                        <i class="fa-brands fa-google text-xs"></i>
+                        <span>Sign In with Google</span>
+                    </button>
+                `;
+                if (mobileTopUserText) mobileTopUserText.innerText = 'Sign In';
+            }
+        }
+
+        function registerTournament(tourneyName) {
+            if (!currentUser) {
+                openAuthModal();
+                triggerToast('Please Sign In to register squad!');
+            } else {
+                triggerToast(`Squad registered for ${tourneyName}!`);
+            }
+        }
+
+        function setActiveMobile(element) {
+            document.querySelectorAll('.mobile-nav-item').forEach(item => {
+                item.classList.remove('active');
+                const wrapper = item.querySelector('.mobile-icon-wrapper');
+                if(wrapper) {
+                    wrapper.classList.remove('bg-gradient-to-tr', 'from-purple-600', 'to-royal-cyan', 'text-white');
+                    wrapper.classList.add('bg-slate-800/90', 'text-slate-400');
+                }
+            });
+            element.classList.add('active');
+        }
+
+        function triggerToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.innerText = msg;
+            toast.classList.remove('translate-x-80', 'opacity-0');
+            toast.classList.add('translate-x-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.add('translate-x-80', 'opacity-0');
+                toast.classList.remove('translate-x-0', 'opacity-100');
+            }, 2500);
+        }
+
+        /* 3D TILT EFFECT */
+        document.addEventListener('mousemove', (e) => {
+            document.querySelectorAll('.tilt-card').forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = ((y - centerY) / centerY) * -8;
+                    const rotateY = ((x - centerX) / centerX) * 8;
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+                } else {
+                    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+                }
+            });
+        });
+
+        /* CANVAS PARTICLES */
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+                this.alpha = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+            }
+            draw() {
+                ctx.fillStyle = `rgba(124, 58, 237, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+
+        document.addEventListener('click', (e) => {
+            const searchDropdown = document.getElementById('searchDropdown');
+            const desktopSearchInput = document.getElementById('desktopSearchInput');
+            const productModal = document.getElementById('productViewModal');
+            
+            if (desktopSearchInput && !desktopSearchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+                searchDropdown.classList.add('hidden');
+            }
+
+            if (e.target === productModal) {
+                closeProductModal();
+            }
+        });
+
+        /* ARENA SALE COUNTDOWN */
+        const ARENA_SALE_KEY = 'lazymonarch_arena_sale_end';
+        const ARENA_SALE_DURATION_MS = (5 * 60 * 60 + 42 * 60 + 18) * 1000;
+
+        function startArenaSaleTimer() {
+            let endTime = Number(localStorage.getItem(ARENA_SALE_KEY));
+            if (!endTime || endTime <= Date.now()) {
+                endTime = Date.now() + ARENA_SALE_DURATION_MS;
+                localStorage.setItem(ARENA_SALE_KEY, String(endTime));
+            }
+
+            const update = () => {
+                const remaining = Math.max(0, endTime - Date.now());
+                const totalSeconds = Math.floor(remaining / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const mins = Math.floor((totalSeconds % 3600) / 60);
+                const secs = totalSeconds % 60;
+                const h = document.getElementById('timerHours');
+                const m = document.getElementById('timerMins');
+                const sec = document.getElementById('timerSecs');
+                if (h) h.innerText = String(hours).padStart(2, '0');
+                if (m) m.innerText = String(mins).padStart(2, '0');
+                if (sec) sec.innerText = String(secs).padStart(2, '0');
+
+                if (remaining <= 0) {
+                    const badge = document.getElementById('arenaSaleBadge');
+                    if (badge) badge.innerHTML = '<i class="fa-solid fa-clock"></i> Arena Sale Ended';
+                    const claim = document.querySelector('a[href="#shop"].btn-3d-gold');
+                    if (claim) {
+                        claim.classList.add('opacity-50', 'pointer-events-none');
+                        claim.innerText = 'Sale Ended';
+                    }
+                    return;
+                }
+                setTimeout(update, 1000);
+            };
+            update();
+        }
+
+        document.addEventListener('click', (event) => {
+            const popup = document.getElementById('accountPopup');
+            const authContainer = document.getElementById('authBtnContainer');
+            if (popup && !popup.classList.contains('hidden') && !popup.contains(event.target) && !(authContainer && authContainer.contains(event.target))) {
+                closeAccountPopup();
+            }
+        });
+
+        window.onload = function() {
+            animateParticles();
+            renderTournaments(TOURNAMENTS);
+            renderShop(PRODUCTS);
+            updateOrdersUI();
+            startArenaSaleTimer();
+            updateAuthUI(currentUser);
+        };
+    </script>
+</body>
+</html>
